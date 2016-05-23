@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+<title>WebDrive</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <progress id="progressBar" value="0" max="100"> 
+    </progress>
+    <div class="uploadBox">
+        <div id="otherZone">
+            <input type="file" name="afile" id="afile" multiple/>
+        </div>
+        <div id="drop_zone">Drop files here</div>
+        <div class="uploadZone">
+            <input id="doUploadButton" type="image" src="./images/upload100.png" />
+        </div>
+    </div>
+
+    <output id="list"></output>
+    <output id="linkList"></output>
+    <output id="imageList"></output>
+    <table id="myTable" >
+        <thead>
+            <tr>
+                <th>File name</th>
+                <th>Size</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    
+<script>
+// Setup the dnd listeners.
+var dropZone = document.getElementById('drop_zone');
+dropZone.addEventListener('dragover', handleDragOver, false);
+dropZone.addEventListener('drop', handleFileSelect, false);
+getFiles();
+  
+var choosedFiles;
+  
+document.querySelector('#doUploadButton').addEventListener('click', function(e) {
+    if(choosedFiles==null) return;
+    sendFile(0);  
+}, false);
+
+document.querySelector('#afile').addEventListener('change', function(e) {
+    var files = this.files;
+    showSelectedFiles(files);
+}, false);
+
+function sendFile(index)
+{
+    var file=choosedFiles[index];
+    if(file==null) return;
+    var fd = new FormData();
+    fd.append("afile", file);
+	 
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'handle_file_upload.php', true);
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            var percentComplete = (e.loaded / e.total) * 100;
+            progressBar.value=percentComplete;
+        }
+    };
+	 
+    xhr.onload = function() {
+        if (this.status == 200) {
+            var resp = JSON.parse(this.response);
+            progressBar.value=100;
+            if(resp.type.indexOf("image") > -1)
+            {
+                var image = document.createElement('img');
+                image.src = resp.dataUrl;
+                //document.body.appendChild(image);
+                var imageList=document.getElementById('imageList');
+                imageList.innerHTML+="<br/>";
+                imageList.appendChild(image);
+            }
+            var fileList=document.getElementById('list');
+            var lis=fileList.getElementsByTagName('li');
+            lis[index].style.background='green';
+            
+            var linkList=document.getElementById('linkList');
+            var link = document.createElement('input');
+            link.type = "text";
+            link.value=resp.dataUrl;
+            link.onclick= function() {
+                this.select();
+            };
+            linkList.appendChild(link);
+            
+            sendFile(++index);
+        };
+    };
+    xhr.send(fd);
+}
+
+function getFiles()
+{
+    var tableRef = document.getElementById('myTable').getElementsByTagName('tbody')[0];
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'handle_getFiles.php', true);
+	 
+    xhr.onload = function() {
+        if (this.status == 200) {
+            var resp = JSON.parse(this.response);
+            var files = resp.files;
+            var address = resp.address;
+            for(var i=0;i<files.length;i++)
+            {
+                var fileRow=files[i];
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+                var j=0;
+							
+                for(var obj in fileRow)
+                {
+                    var newCell  = newRow.insertCell(j);
+                    var newText  = document.createTextNode(fileRow[obj]);
+                    if(obj=="name")
+                    {
+                        var a=document.createElement('a');
+                        a.href=address + fileRow[obj];
+                        a.appendChild(newText);
+                        newCell.appendChild(a);
+                    }
+                    else
+                    {
+                        newCell.appendChild(newText);
+                    }
+                    j++;
+                }
+            }
+        };
+    };
+	 
+    xhr.send();
+
+}
+
+
+
+function handleFileSelect(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var files = evt.dataTransfer.files; // FileList object.
+
+    showSelectedFiles(files);
+}
+  
+function showSelectedFiles(files)
+{
+    choosedFiles=files;
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+        output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '</li>');
+    }
+    document.getElementById('list').innerHTML = '<ul id="ulSet">' + output.join('') + '</ul>';
+}
+
+function handleDragOver(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+}
+
+
+
+</script>
+
+
+<!--[if IE]>
+<script src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
+<script>CFInstall.check({mode: 'overlay'});</script>
+<![endif]-->
+
+</body>
+</html>

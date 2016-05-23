@@ -1,0 +1,124 @@
+body {
+	background-color:white;
+}
+a {
+	color:#16b2e4;
+}
+#drop_zone {
+	border: 2px dashed #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 25px;
+	text-align: center;
+	font: 20pt bold 'Vollkorn';
+	color: #bbb;
+	width:37%;
+	float:left;
+	margin-left:5px;
+	margin-right:5px;
+}
+
+.uploadZone{
+	border: 2px dashed #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	float:left;
+	padding: 5px 3px 5px 3px;
+
+}
+
+.uploadZone input{
+    width:60%;
+    height:60%;
+    margin:0px auto;
+    display:block;
+}
+#myTable{
+    margin: 15px auto;
+    padding-top:20px;
+    clear:both;
+    background: transparent;
+	color: #000;
+
+
+}
+#otherZone{
+    float:left;
+    border: 2px dashed #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 23px;
+	font: 20pt bold 'Vollkorn';
+	width: 10%;
+	margin-left: 17%;
+}
+
+#list{
+    margin: 0px auto;
+    clear:both;
+}
+
+#ulSet
+{
+    clear:both;
+    margin: 0px auto;
+    width:70%;
+    text-align: center;
+    padding:25px;
+}
+
+#progressBar
+{
+    clear:both;
+    margin: 0px auto;
+    width:70%;
+    display:block;
+    margin-bottom:10px;
+    border: 2px dashed #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+
+.uploadBox {
+	padding-bottom: 30px;
+	width:100%;
+	margin: 0px auto;
+}
+
+#myTable thead{
+    color: #fff;
+    background-color:#000;
+}
+
+#myTable tbody tr:nth-child(even) {
+	background: #e6e6e6;
+}
+#myTable tbody tr:nth-child(odd) {
+	background: #D6D6D6;
+}
+
+#myTable tbody tr:hover {
+	background: #16b2e4;
+    color:#fff;
+}
+
+#myTable tbody tr:hover a {
+	color:#fff;
+}
+
+
+#imageList img{
+    margin: 0px auto;
+    display:block;
+}
+
+#linkList input{
+    margin: 0px auto;
+    display:block;
+    width:70%;
+}
